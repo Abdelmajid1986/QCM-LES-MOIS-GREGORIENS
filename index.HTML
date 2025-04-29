@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>QCM - Les Mois en Arabe</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .question { margin-bottom: 20px; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    .hidden { display: none; }
+    #timer { font-weight: bold; color: darkred; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>QCM : Les Mois en Arabe</h1>
+  <div id="timer">Temps restant : 25:00</div>
+  <form id="qcmForm">
+    <!-- Question templates will be inserted here -->
+  </form>
+  <button onclick="submitQCM()">Valider les réponses</button>
+  <div id="correction" class="hidden">
+    <h2>Corrigé :</h2>
+    <div id="correctionContent"></div>
+  </div>
+  
+  <script>
+    const questions = [
+      { q: 'Comment dit-on "janvier" en arabe (version standard) ?', options: ['يُونْيُو (Yūnyū)', 'يَنَايِرُ (Yanāyir)', 'كَانُونُ ٱلثَّانِي (Kānūn Ath-Thānī)'], answer: 1 },
+      { q: 'Quelle est la traduction de "أُكْتُوبَرُ" (Uktūbar) ?', options: ['Septembre', 'Novembre', 'Octobre'], answer: 2 },
+      { q: 'Dans la version du Moyen-Orient, quel est le mois qui correspond à "Mars" ?', options: ['آذَارُ (Ādhār)', 'أَيَّارُ (Ayyār)', 'حَزِيرَانُ (Ḥazīrān)'], answer: 0 },
+      { q: 'Comment dit-on "décembre" en arabe (version standard) ?', options: ['كَانُونُ ٱلأَوَّلُ (Kānūn Al-Awwal)', 'دِيسَمْبَرُ (Dīsambar)', 'نُوفَمْبَرُ (Nūfambar)'], answer: 1 },
+      { q: 'Quel mois arabe correspond à "August" ?', options: ['يُولْيُو (Yūlyū)', 'أَغُسْطُسُ (Aghusṭus)', 'أَيْلُولُ (Aylūl)'], answer: 1 },
+      { q: 'Comment dit-on "mai" en arabe (version du Levant) ?', options: ['نَيْسَانُ (Naysān)', 'أَيَّارُ (Ayyār)', 'آذَارُ (Ādhār)'], answer: 1 },
+      { q: 'Quel mois vient après شُبَاطُ (Shubāṭ) ?', options: ['آذَارُ (Ādhār)', 'نَيْسَانُ (Naysān)', 'حَزِيرَانُ (Ḥazīrān)'], answer: 0 },
+      { q: 'Comment dit-on "juin" en arabe (version standard) ?', options: ['يُونْيُو (Yūnyū)', 'يُولْيُو (Yūlyū)', 'حَزِيرَانُ (Ḥazīrān)'], answer: 0 },
+      { q: 'Quelle est la traduction de "تِشْرِينُ ٱلأَوَّلُ" (Tishrīn Al-Awwal) ?', options: ['Novembre', 'Octobre', 'Septembre'], answer: 1 },
+      { q: 'Comment dit-on "septembre" en arabe (version standard) ?', options: ['أَيْلُولُ (Aylūl)', 'شُتَنْبِرْ (Shuṭanbir)', 'حَزِيرَانُ (Ḥazīrān)'], answer: 0 },
+      { q: 'Dans la version du Moyen-Orient, quel mois précède "آبُ" (Āb) ?', options: ['نَيْسَانُ (Naysān)', 'تَمُّوزُ (Tammūz)', 'أَيْلُولُ (Aylūl)'], answer: 1 },
+      { q: 'Comment dit-on "novembre" en arabe (version standard) ?', options: ['نُوفَمْبَرُ (Nūfambar)', 'دِيسَمْبَرُ (Dīsambar)', 'أُكْتُوبَرُ (Uktūbar)'], answer: 0 },
+      { q: 'Quel est le premier mois de l’année dans la version du Levant ?', options: ['كَانُونُ ٱلثَّانِي (Kānūn Ath-Thānī)', 'كَانُونُ ٱلأَوَّلُ (Kānūn Al-Awwal)', 'شُبَاطُ (Shubāṭ)'], answer: 1 },
+      { q: 'Quel mois arabe correspond à "July" ?', options: ['يُونْيُو (Yūnyū)', 'يُولْيُو (Yūlyū)', 'يُونْيَةُ (Yūnyah)'], answer: 1 },
+      { q: 'Comment dit-on "avril" en arabe (version standard) ?', options: ['نَيْسَانُ (Naysān)', 'أَبْرِيلُ (Abrīl)', 'أَغُسْطُسُ (Aghusṭus)'], answer: 1 },
+    ];
+
+    const form = document.getElementById('qcmForm');
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `<p><strong>${i + 1}. ${q.q}</strong></p>` +
+        q.options.map((opt, j) => `
+          <label>
+            <input type="radio" name="q${i}" value="${j}"> ${opt}
+          </label><br>
+        `).join('');
+      form.appendChild(div);
+    });
+
+    function submitQCM() {
+      let score = 0;
+      const correction = document.getElementById('correction');
+      const correctionContent = document.getElementById('correctionContent');
+      correctionContent.innerHTML = '';
+      questions.forEach((q, i) => {
+        const userAnswer = document.querySelector(`input[name="q${i}"]:checked`);
+        const userValue = userAnswer ? parseInt(userAnswer.value) : -1;
+        const isCorrect = userValue === q.answer;
+        if (isCorrect) score++;
+        const result = document.createElement('p');
+        result.className = isCorrect ? 'correct' : 'incorrect';
+        result.innerHTML = `${i + 1}. ${q.q}<br>Votre réponse : ${userAnswer ? q.options[userValue] : 'Aucune'}<br>Réponse correcte : ${q.options[q.answer]}`;
+        correctionContent.appendChild(result);
+      });
+      correction.classList.remove('hidden');
+    }
+
+    // Timer
+    let totalSeconds = 25 * 60;
+    const timerElement = document.getElementById('timer');
+    const interval = setInterval(() => {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      timerElement.textContent = `Temps restant : ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      if (--totalSeconds < 0) {
+        clearInterval(interval);
+        submitQCM();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
