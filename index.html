@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>QCM - Mois en arabe</title>
+    <style>
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .correction {
+            margin-top: 10px;
+        }
+        #timer {
+            font-size: 20px;
+            font-weight: bold;
+            color: blue;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>QCM : Les mois de l'année en arabe</h1>
+
+    <div id="timer">Temps restant : 05:00</div>
+
+    <form id="qcmForm">
+        <ol>
+            <!-- Toutes les questions (mêmes questions que précédemment) -->
+            <!-- Pour raccourcir ici, tu peux copier les questions du précédent code -->
+            <!-- Je mets quelques exemples, mais tu peux coller ton bloc de questions complet -->
+            <li>
+                Comment dit-on "janvier" en arabe (version standard) ?<br>
+                <input type="radio" name="q1" value="a"> يُونْيُو (Yūnyū)<br>
+                <input type="radio" name="q1" value="b"> يَنَايِرُ (Yanāyir)<br>
+                <input type="radio" name="q1" value="c"> كَانُونُ ٱلثَّانِي (Kānūn Ath-Thānī)
+            </li><br>
+
+            <!-- (COLLER ICI TOUTES TES AUTRES QUESTIONS) -->
+
+        </ol>
+        <button type="button" onclick="corriger()">Valider</button>
+    </form>
+
+    <div id="resultat" class="correction"></div>
+
+    <script>
+        const reponses = {
+            q1: "b",
+            q2: "c",
+            q3: "a",
+            q4: "b",
+            q5: "b",
+            q6: "b",
+            q7: "a",
+            q8: "a",
+            q9: "b",
+            q10: "a",
+            q11: "b",
+            q12: "a",
+            q13: "b",
+            q14: "b",
+            q15: "b"
+        };
+
+        let tempsRestant = 300; // 5 minutes = 300 secondes
+        let timerInterval = setInterval(updateTimer, 1000);
+
+        function updateTimer() {
+            const minutes = Math.floor(tempsRestant / 60);
+            const secondes = tempsRestant % 60;
+            document.getElementById('timer').textContent = `Temps restant : ${minutes.toString().padStart(2, '0')}:${secondes.toString().padStart(2, '0')}`;
+            tempsRestant--;
+
+            if (tempsRestant < 0) {
+                clearInterval(timerInterval);
+                alert("Temps écoulé ! Votre test va être corrigé.");
+                corriger();
+            }
+        }
+
+        function corriger() {
+            clearInterval(timerInterval); // Arrête le chrono au cas où
+            let score = 0;
+            const total = Object.keys(reponses).length;
+            const resultatDiv = document.getElementById("resultat");
+            resultatDiv.innerHTML = "";
+
+            for (let q in reponses) {
+                const radios = document.getElementsByName(q);
+                let trouve = false;
+
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        trouve = true;
+                        if (radios[i].value === reponses[q]) {
+                            score++;
+                            resultatDiv.innerHTML += `<p class="correct">Question ${q.substring(1)} : Correct</p>`;
+                        } else {
+                            resultatDiv.innerHTML += `<p class="incorrect">Question ${q.substring(1)} : Incorrect</p>`;
+                        }
+                    }
+                }
+                if (!trouve) {
+                    resultatDiv.innerHTML += `<p class="incorrect">Question ${q.substring(1)} : Non répondu</p>`;
+                }
+            }
+            resultatDiv.innerHTML += `<hr><h2>Votre score : ${score} / ${total}</h2>`;
+        }
+    </script>
+</body>
+</html>
